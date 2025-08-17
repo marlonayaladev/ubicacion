@@ -9,6 +9,11 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+// --- Agrega estas líneas para servir archivos estáticos ---
+// Sirve la carpeta "frontend" donde están tus archivos HTML
+app.use(express.static(path.join(__dirname, '..', 'public')));
+// --------------------------------------------------------
+
 const dataFilePath = path.join(__dirname, 'ubicaciones.json');
 
 // Endpoint para recibir las ubicaciones de la víctima
@@ -41,7 +46,6 @@ app.post('/api/ubicacion', (req, res) => {
 app.get('/api/ubicaciones', (req, res) => {
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         if (err) {
-            // Si el archivo no existe, retorna un array vacío
             return res.status(200).send([]);
         }
         try {
