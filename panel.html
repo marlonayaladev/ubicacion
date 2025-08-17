@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #222; color: #f1f1f1; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background-color: #333; padding: 20px; border-radius: 8px; }
+        h1 { color: #4CAF50; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #555; padding: 10px; text-align: left; }
+        th { background-color: #444; }
+        .map-link { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Ubicaciones Recibidas</h1>
+    <table id="ubicaciones-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Fecha/Hora</th>
+                <th>Ver en Mapa</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableBody = document.getElementById('table-body');
+
+        // Petición a tu servidor local para obtener los datos
+        fetch('http://localhost:3000/api/ubicaciones')
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5">Aún no hay ubicaciones.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(ubicacion => {
+                    const row = document.createElement('tr');
+                    const mapUrl = `http://googleusercontent.com/maps.google.com/8`;
+                    
+                    row.innerHTML = `
+                        <td>${ubicacion.id}</td>
+                        <td>${ubicacion.lat}</td>
+                        <td>${ubicacion.lon}</td>
+                        <td>${new Date(ubicacion.timestamp).toLocaleString()}</td>
+                        <td><a href="${mapUrl}" target="_blank" class="map-link">Ver</a></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+                tableBody.innerHTML = `<tr><td colspan="5">No se pudieron cargar los datos. Asegúrate de que el servidor esté corriendo.</td></tr>`;
+            });
+    });
+</script>
+
+</body>
+</html>
