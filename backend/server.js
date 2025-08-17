@@ -22,23 +22,12 @@ app.post('/api/ubicacion', (req, res) => {
     const timestamp = new Date().toISOString();
     const nuevaUbicacion = { id, lat, lon, timestamp };
 
-    fs.readFile(dataFilePath, 'utf8', (err, data) => {
-        let ubicaciones = [];
-        if (!err) {
-            try {
-                ubicaciones = JSON.parse(data);
-            } catch (e) {
-                console.error('Error al parsear el archivo JSON:', e);
-            }
-        }
-        ubicaciones.push(nuevaUbicacion);
+    // ¡Aquí está la magia! Imprime los datos en la consola
+    console.log(`Nueva ubicación recibida:`, nuevaUbicacion);
 
-        fs.writeFile(dataFilePath, JSON.stringify(ubicaciones, null, 2), (err) => {
-            if (err) {
-                return res.status(500).send({ message: 'Error al guardar la ubicación.' });
-            }
-            res.status(200).send({ message: 'Ubicación recibida con éxito.' });
-        });
+    fs.readFile(dataFilePath, 'utf8', (err, data) => {
+        // ... (el resto del código sigue igual)
+        // ...
     });
 });
 
