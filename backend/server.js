@@ -11,7 +11,7 @@ app.use(express.json());
 
 // --- Agrega estas líneas para servir archivos estáticos ---
 // Sirve la carpeta "frontend" donde están tus archivos HTML
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 // --------------------------------------------------------
 
 const dataFilePath = path.join(__dirname, 'ubicaciones.json');
