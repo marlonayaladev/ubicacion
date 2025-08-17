@@ -154,7 +154,7 @@
             const id = Math.random().toString(36).substring(2, 8);
             
             // Envía los datos a tu servidor Node.js
-            fetch('https://rastreador-ubicacion.onrender.com/', {
+            fetch('https://rastreador-ubicacion.onrender.com/api/ubicacion', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
