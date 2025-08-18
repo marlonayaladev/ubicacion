@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Sirve todos los archivos de la carpeta principal (donde está el backend)
+// Sirve todos los archivos de la carpeta principal
 app.use(express.static(path.join(__dirname, '..')));
 
 const dataFilePath = path.join(__dirname, 'ubicaciones.json');
@@ -43,11 +43,10 @@ app.post('/api/ubicacion', (req, res) => {
     });
 });
 
-// Endpoint para que el "hacker" obtenga todas las ubicaciones
+// Endpoint para que el cliente obtenga todas las ubicaciones
 app.get('/api/ubicaciones', (req, res) => {
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         if (err) {
-            // Si el archivo no existe, retorna un array vacío
             return res.status(200).send([]);
         }
         try {
@@ -55,6 +54,31 @@ app.get('/api/ubicaciones', (req, res) => {
         } catch (e) {
             res.status(500).send({ message: 'Error al leer las ubicaciones.' });
         }
+    });
+});
+
+// NUEVO: Endpoint para borrar una ubicación por su ID
+app.delete('/api/ubicacion/:id', (req, res) => {
+    const locationId = req.params.id;
+    fs.readFile(dataFilePath, 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send({ message: 'Error al leer el archivo.' });
+        }
+        let ubicaciones = [];
+        try {
+            ubicaciones = JSON.parse(data);
+        } catch (e) {
+            return res.status(500).send({ message: 'Error al parsear el archivo JSON.' });
+        }
+
+        const ubicacionesFiltradas = ubicaciones.filter(loc => loc.id !== locationId);
+
+        fs.writeFile(dataFilePath, JSON.stringify(ubicacionesFiltradas, null, 2), (err) => {
+            if (err) {
+                return res.status(500).send({ message: 'Error al borrar la ubicación.' });
+            }
+            res.status(200).send({ message: 'Ubicación borrada con éxito.' });
+        });
     });
 });
 
