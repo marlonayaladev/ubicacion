@@ -38,7 +38,7 @@
         const tableBody = document.getElementById('table-body');
 
         // Petición a tu servidor local para obtener los datos
-        fetch('http://localhost:3000/api/ubicaciones')
+        fetch('https://rastreador-ubicacion.onrender.com/api/ubicaciones')
             .then(response => response.json())
             .then(data => {
                 if (data.length === 0) {

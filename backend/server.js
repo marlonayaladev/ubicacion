@@ -48,3 +48,8 @@ app.get('/api/ubicaciones', (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+
+// Agrega esta línea para servir el archivo panel.html
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'panel.html'));
+});
