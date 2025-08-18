@@ -9,10 +9,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- Agrega estas líneas para servir archivos estáticos ---
-// Sirve la carpeta "frontend" donde están tus archivos HTML
+// Sirve todos los archivos de la carpeta principal (donde está el backend)
 app.use(express.static(path.join(__dirname, '..')));
-// --------------------------------------------------------
 
 const dataFilePath = path.join(__dirname, 'ubicaciones.json');
 
@@ -22,12 +20,26 @@ app.post('/api/ubicacion', (req, res) => {
     const timestamp = new Date().toISOString();
     const nuevaUbicacion = { id, lat, lon, timestamp };
 
-    // ¡Aquí está la magia! Imprime los datos en la consola
+    // Imprime los datos en la consola para verlos en los logs de Render
     console.log(`Nueva ubicación recibida:`, nuevaUbicacion);
 
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
-        // ... (el resto del código sigue igual)
-        // ...
+        let ubicaciones = [];
+        if (!err) {
+            try {
+                ubicaciones = JSON.parse(data);
+            } catch (e) {
+                console.error('Error al parsear el archivo JSON:', e);
+            }
+        }
+        ubicaciones.push(nuevaUbicacion);
+
+        fs.writeFile(dataFilePath, JSON.stringify(ubicaciones, null, 2), (err) => {
+            if (err) {
+                return res.status(500).send({ message: 'Error al guardar la ubicación.' });
+            }
+            res.status(200).send({ message: 'Ubicación recibida con éxito.' });
+        });
     });
 });
 
@@ -35,6 +47,7 @@ app.post('/api/ubicacion', (req, res) => {
 app.get('/api/ubicaciones', (req, res) => {
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         if (err) {
+            // Si el archivo no existe, retorna un array vacío
             return res.status(200).send([]);
         }
         try {
@@ -47,9 +60,4 @@ app.get('/api/ubicaciones', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
-});
-
-// Agrega esta línea para servir el archivo panel.html
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'panel.html'));
 });

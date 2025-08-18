@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #222; color: #f1f1f1; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background-color: #333; padding: 20px; border-radius: 8px; }
-        h1 { color: #4CAF50; text-align: center; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Control</title>
+<style>
+ body { font-family: Arial, sans-serif; background-color: #222; color: #f1f1f1; padding: 20px; }
+ .container { max-width: 800px; margin: auto; background-color: #333; padding: 20px; border-radius: 8px; }
+ h1 { color: #4CAF50; text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #555; padding: 10px; text-align: left; }
         th { background-color: #444; }
@@ -37,7 +37,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById('table-body');
 
-        // Petición a tu servidor local para obtener los datos
+        // Petición al servidor de Render para obtener los datos
         fetch('https://rastreador-ubicacion.onrender.com/api/ubicaciones')
             .then(response => response.json())
             .then(data => {
@@ -48,7 +48,8 @@
 
                 data.forEach(ubicacion => {
                     const row = document.createElement('tr');
-                    const mapUrl = `http://googleusercontent.com/maps.google.com/8`;
+                    // ¡URL de Google Maps corregida!
+                    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${ubicacion.lat},${ubicacion.lon}`;
                     
                     row.innerHTML = `
                         <td>${ubicacion.id}</td>
