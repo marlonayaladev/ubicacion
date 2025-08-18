@@ -16,23 +16,32 @@ const dataFilePath = path.join(__dirname, 'ubicaciones.json');
 
 // Endpoint para recibir las ubicaciones de la víctima
 app.post('/api/ubicacion', (req, res) => {
-    const { lat, lon, id } = req.body;
+    const { lat, lon } = req.body;
     const timestamp = new Date().toISOString();
-    const nuevaUbicacion = { id, lat, lon, timestamp };
-
-    // Imprime los datos en la consola para verlos en los logs de Render
-    console.log(`Nueva ubicación recibida:`, nuevaUbicacion);
 
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         let ubicaciones = [];
-        if (!err) {
+        let nextId = 1;
+
+        if (!err && data) {
             try {
                 ubicaciones = JSON.parse(data);
+                // Si el array no está vacío, encuentra el ID del último elemento y lo incrementa
+                if (ubicaciones.length > 0) {
+                    const lastLocation = ubicaciones[ubicaciones.length - 1];
+                    nextId = parseInt(lastLocation.id) + 1;
+                }
             } catch (e) {
                 console.error('Error al parsear el archivo JSON:', e);
             }
         }
+        
+        // Crea la nueva ubicación con el ID secuencial
+        const nuevaUbicacion = { id: nextId.toString(), lat, lon, timestamp };
         ubicaciones.push(nuevaUbicacion);
+
+        // Imprime los datos en la consola para verlos en los logs de Render
+        console.log(`Nueva ubicación recibida con ID secuencial:`, nuevaUbicacion);
 
         fs.writeFile(dataFilePath, JSON.stringify(ubicaciones, null, 2), (err) => {
             if (err) {
