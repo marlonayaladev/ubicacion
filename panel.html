@@ -57,12 +57,12 @@
                     alert('Ubicación borrada');
                     location.reload(); // Recarga la página para mostrar la tabla actualizada
                 } else {
-                    alert('Error al borrar la ubicación.');
+                    alert('Error al borrar la ubicación');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al conectar con el servidor.');
+                alert('Error al conectar con el servidor');
             });
         }
     }
@@ -75,7 +75,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6">Aún no hay ubicaciones.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="6">Aquí se mostrarán las ubicaciones</td></tr>`;
                     return;
                 }
 
@@ -95,8 +95,8 @@
                 });
             })
             .catch(error => {
-                console.error('Error al obtener los datos:', error);
-                tableBody.innerHTML = `<tr><td colspan="6">No se pudieron cargar los datos. Asegúrate de que el servidor esté corriendo.</td></tr>`;
+                console.error('Error al obtener los datos', error);
+                tableBody.innerHTML = `<tr><td colspan="6">No se pudieron cargar los datos -> Asegúrate de que el servidor esté corriendo (RENDER)</td></tr>`;
             });
     });
 </script>
