@@ -48,13 +48,13 @@
 <script>
     // Función para borrar una ubicación
     function deleteLocation(id) {
-        if (confirm('¿Estás seguro de que quieres borrar esta ubicación?')) {
+        if (confirm('¿Quiere borrar esta ubicación?')) {
             fetch(`https://rastreador-ubicacion.onrender.com/api/ubicacion/${id}`, {
                 method: 'DELETE'
             })
             .then(response => {
                 if (response.ok) {
-                    alert('Ubicación borrada con éxito.');
+                    alert('Ubicación borrada');
                     location.reload(); // Recarga la página para mostrar la tabla actualizada
                 } else {
                     alert('Error al borrar la ubicación.');
