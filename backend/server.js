@@ -67,24 +67,26 @@ app.get('/api/ubicaciones', (req, res) => {
 });
 
 
+
+
 app.delete('/api/ubicacion/:id', (req, res) => {
     const locationId = req.params.id;
     fs.readFile(dataFilePath, 'utf8', (err, data) => {
         if (err) {
-            return res.status(500).send({ message: 'Error al leer el archivo.' });
+            return res.status(500).send({ message: 'Error al leer el archivo' });
         }
         let ubicaciones = [];
         try {
             ubicaciones = JSON.parse(data);
         } catch (e) {
-            return res.status(500).send({ message: 'Error al parsear el archivo JSON.' });
+            return res.status(500).send({ message: 'Error al parsear el archivo JSON' });
         }
 
         const ubicacionesFiltradas = ubicaciones.filter(loc => loc.id !== locationId);
 
         fs.writeFile(dataFilePath, JSON.stringify(ubicacionesFiltradas, null, 2), (err) => {
             if (err) {
-                return res.status(500).send({ message: 'Error al borrar la ubicación.' });
+                return res.status(500).send({ message: 'Error al borrar la ubicación' });
             }
             res.status(200).send({ message: 'Ubicación borrada con éxito.' });
         });
